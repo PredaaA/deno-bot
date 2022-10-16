@@ -2,19 +2,17 @@
 
 import { BASE_URL, createRestManager } from "discordeno";
 import express, { Request, Response } from "express";
-import dotenv from "dotenv";
-
-dotenv.config()
-
-const discordToken: string = process.env["DISCORD_TOKEN"] || "";
-const restAuth: string = process.env["REST_AUTHORIZATION"] || "testing";
-const restPort: number = Number(process.env["REST_PORT"]);
-const restUrl: string = `http://127.0.0.1:${restPort}`;
+import {
+  DISCORD_TOKEN,
+  REST_AUTHORIZATION,
+  REST_URL,
+  REST_PORT
+} from "../config.js"
 
 const rest = createRestManager({
-  token: discordToken,
-  secretKey: restAuth,
-  customUrl: restUrl,
+  token: DISCORD_TOKEN,
+  secretKey: REST_AUTHORIZATION,
+  customUrl: REST_URL,
   debug: console.log,
 });
 
@@ -55,7 +53,7 @@ app.patch("/*", async (req, res) => {
 });
 
 async function handleRequest(req: Request, res: Response) {
-  if (!restAuth || restAuth !== req.headers.authorization) {
+  if (!REST_AUTHORIZATION || REST_AUTHORIZATION !== req.headers.authorization) {
     return res.status(401).json({ error: "Invalid authorization key." });
   }
 
@@ -73,6 +71,6 @@ async function handleRequest(req: Request, res: Response) {
   }
 }
 
-app.listen(restPort, () => {
-  console.log(`REST listening at ${restUrl}`);
+app.listen(REST_PORT, () => {
+  console.log(`REST listening at ${REST_URL}`);
 });
